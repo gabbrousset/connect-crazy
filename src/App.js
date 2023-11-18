@@ -8,7 +8,6 @@ const colsNum = 7;
 const App = () => {
     const [turn, setTurn] = useState(1);
     const handleChangeTurn = () => {
-        console.log('chaning turn now');
         setTurn((turn) => (turn === 1 ? 2 : 1));
     };
 
