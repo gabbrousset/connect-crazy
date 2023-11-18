@@ -1,52 +1,59 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
+
+const rowsNum = 6;
+const colsNum = 6;
+
+const createInitialGrid = () =>
+    Array(colsNum)
+        .fill()
+        .map(() => Array(rowsNum).fill(0));
+
+const Cell = memo(({ value }) => <div className={`cell color-${value}`} />);
 
 const Grid = ({ turn, handleChangeTurn }) => {
-    const rowsNum = 6;
-    const colsNum = 6;
+    const [grid, setGrid] = useState(createInitialGrid);
 
-    const [grid, setGrid] = useState(
-        Array(colsNum)
-            .fill()
-            .map(() => Array(rowsNum).fill(0))
+    const findFirstEmptySpace = (col) =>
+        col.findLastIndex((cell) => cell === 0);
+
+    const handleDropPieceOnCol = useCallback(
+        (colIdx) => {
+            const rowIdx = findFirstEmptySpace(grid[colIdx]);
+            if (rowIdx !== -1) {
+                setGrid((prevGrid) =>
+                    prevGrid.map((column, idx) =>
+                        idx === colIdx
+                            ? [
+                                  ...column.slice(0, rowIdx),
+                                  turn,
+                                  ...column.slice(rowIdx + 1),
+                              ]
+                            : column
+                    )
+                );
+                handleChangeTurn();
+            }
+        },
+        [grid, turn, handleChangeTurn]
     );
 
-    const findFirstEmptySpace = (col) => {
-        for (let i = rowsNum - 1; i >= 0; i--) {
-            if (col[i] === 0) {
-                return i;
-            }
-        }
-        return null;
-    };
-
-    const handleDropPieceOnCol = (colIdx) => {
-        const rowIdx = findFirstEmptySpace(grid[colIdx]);
-        setGrid((oldGrid) => {
-            const newGrid = structuredClone(oldGrid);
-            newGrid[colIdx][rowIdx] = turn;
-            return newGrid;
-        });
-        handleChangeTurn();
-    };
-
-    return (
-        <div id='grid'>
-            {grid?.map((column, colIdx) => (
+    const renderedGrid = useMemo(
+        () =>
+            grid.map((column, colIdx) => (
                 <div
+                    key={colIdx}
                     className='column'
                     onClick={() => handleDropPieceOnCol(colIdx)}
                 >
-                    {column.map((element, rowIdx) => (
-                        <div
-                            className={`element color-${grid[colIdx][rowIdx]}`}
-                        >
-                            {/* <p>{grid[colIdx][rowIdx]}</p> */}
-                        </div>
+                    {column.map((value, rowIdx) => (
+                        <Cell key={`${colIdx}-${rowIdx}`} value={value} />
                     ))}
                 </div>
-            ))}
-        </div>
+            )),
+        [grid, handleDropPieceOnCol]
     );
+
+    return <div id='grid'>{renderedGrid}</div>;
 };
 
 export default Grid;
