@@ -2,6 +2,9 @@ import { useState } from 'react';
 import './App.css';
 import Grid from './Grid';
 
+const rowsNum = 6;
+const colsNum = 7;
+
 const App = () => {
     const [turn, setTurn] = useState(1);
     const handleChangeTurn = () => {
@@ -11,7 +14,12 @@ const App = () => {
 
     return (
         <div id='app'>
-            <Grid turn={turn} handleChangeTurn={handleChangeTurn}></Grid>
+            <Grid
+                rowsNum={rowsNum}
+                colsNum={colsNum}
+                turn={turn}
+                handleChangeTurn={handleChangeTurn}
+            ></Grid>
             <p>turn: {turn === 1 ? 'blue' : 'red'}</p>
         </div>
     );

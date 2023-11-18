@@ -1,24 +1,16 @@
 import { useState, useCallback, useMemo, memo } from 'react';
-
-const rowsNum = 6;
-const colsNum = 6;
-
-const createInitialGrid = () =>
-    Array(colsNum)
-        .fill()
-        .map(() => Array(rowsNum).fill(0));
+import { createInitialGrid } from './utils';
 
 const Cell = memo(({ value }) => <div className={`cell color-${value}`} />);
 
-const Grid = ({ turn, handleChangeTurn }) => {
-    const [grid, setGrid] = useState(createInitialGrid);
+const Grid = ({ rowsNum, colsNum, turn, handleChangeTurn }) => {
+    const [grid, setGrid] = useState(() => createInitialGrid(rowsNum, colsNum));
 
-    const findFirstEmptySpace = (col) =>
-        col.findLastIndex((cell) => cell === 0);
+    const findFirstEmptyCell = (col) => col.findLastIndex((cell) => cell === 0);
 
-    const handleDropPieceOnCol = useCallback(
+    const handleDropDiscOnCol = useCallback(
         (colIdx) => {
-            const rowIdx = findFirstEmptySpace(grid[colIdx]);
+            const rowIdx = findFirstEmptyCell(grid[colIdx]);
             if (rowIdx !== -1) {
                 setGrid((prevGrid) =>
                     prevGrid.map((column, idx) =>
@@ -43,14 +35,14 @@ const Grid = ({ turn, handleChangeTurn }) => {
                 <div
                     key={colIdx}
                     className='column'
-                    onClick={() => handleDropPieceOnCol(colIdx)}
+                    onClick={() => handleDropDiscOnCol(colIdx)}
                 >
                     {column.map((value, rowIdx) => (
                         <Cell key={`${colIdx}-${rowIdx}`} value={value} />
                     ))}
                 </div>
             )),
-        [grid, handleDropPieceOnCol]
+        [grid, handleDropDiscOnCol]
     );
 
     return <div id='grid'>{renderedGrid}</div>;
