@@ -8,12 +8,19 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/layout"
 
- 
+    // "fyne.io/fyne/v2/driver/desktop"
+    "fyne.io/x/fyne/wrapper"
+
     "image/color"
     "fmt"
 )
 
-
+type gridObject struct {
+    circ (*canvas.Circle)
+    colorIndex int
+    colIndex  int
+    rowIndex int
+}
 func main() {
 	a := app.New()
 	w := a.NewWindow("Crazy-Connect")
@@ -41,13 +48,37 @@ func main() {
 	grid := container.New(layout.NewGridLayout(6))
     for i := 0; i < rowsNum; i++ {
         for j := 0; j < colsNum; j++{
-            colorTOBEIMPLEMENTED := gameState[i][j]
-            fmt.Println(colorTOBEIMPLEMENTED)
-            circlea := canvas.NewCircle(color.RGBA{10, 15, 222 ,128})
-            grid.Add(circlea)
+            // colorTOBEIMPLEMENTED := gameState[i][j]
+            // fmt.Println(colorTOBEIMPLEMENTED)
+            circlea := gridObject{canvas.NewCircle(color.White), 0, i, j}
+            wrapped := wrapper.MakeTappable(circlea.circ, func(e *fyne.PointEvent) {
+                
+                fmt.Println(circlea.rowIndex, circlea.colIndex, gameState)
+                
+                switch colorSet := gameState[circlea.rowIndex][circlea.colIndex]; colorSet {
+                case 1:
+                    fmt.Println("a");
+                    gameState[circlea.rowIndex][circlea.colIndex] = 2;
+                    circlea.circ.FillColor=color.RGBA{255, 0, 61 ,128}
+                case 2:
+                    fmt.Println("A");
+                    gameState[circlea.rowIndex][circlea.colIndex] = 0;
+                    circlea.circ.FillColor=color.White
+                default:
+                    fmt.Println(colorSet);
+                    gameState[circlea.rowIndex][circlea.colIndex] = 1;
+                    circlea.circ.FillColor=color.RGBA{10, 15, 222 ,128}
+                }
+                circlea.circ.Refresh()
+
+            })
+            grid.Add(wrapped)
         }
     }
     grid.Add(hello)
     w.SetContent(grid)
+
+
+
 	w.ShowAndRun()
 }
