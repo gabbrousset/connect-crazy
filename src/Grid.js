@@ -1,7 +1,6 @@
-import { useState, useCallback, useMemo, memo } from 'react';
-import { checkForWin, createInitialGrid } from './utils';
-
-const Cell = memo(({ value }) => <div className={`cell color-${value}`} />);
+import { useState, useCallback, useMemo } from 'react';
+import { checkForWin, createInitialGrid, rotateGrid } from './utils';
+import Cell from './Cell';
 
 const Grid = ({ rowsNum, colsNum, turn, handleChangeTurn }) => {
     const [grid, setGrid] = useState(() => createInitialGrid(colsNum, rowsNum));
@@ -35,12 +34,16 @@ const Grid = ({ rowsNum, colsNum, turn, handleChangeTurn }) => {
         [grid, handleChangeTurn, handleDropDiscOnCol, turn, rowsNum, colsNum]
     );
 
+    const handleRotate = () => {
+        setGrid(rotateGrid(grid, rowsNum, colsNum));
+    };
+
     const renderedGrid = useMemo(
         () =>
             grid.map((column, colIdx) => (
                 <div
                     key={colIdx}
-                    className='column'
+                    className={`column hover-color-${turn}`}
                     onClick={() => handleTurn(colIdx)}
                 >
                     {column.map((value, rowIdx) => (
@@ -48,10 +51,15 @@ const Grid = ({ rowsNum, colsNum, turn, handleChangeTurn }) => {
                     ))}
                 </div>
             )),
-        [grid, handleTurn]
+        [grid, handleTurn, turn]
     );
 
-    return <div id='grid'>{renderedGrid}</div>;
+    return (
+        <>
+            <div id='grid'>{renderedGrid}</div>
+            <button onClick={handleRotate}>rotate</button>
+        </>
+    );
 };
 
 export default Grid;

@@ -18,8 +18,7 @@ const App = () => {
                 colsNum={colsNum}
                 turn={turn}
                 handleChangeTurn={handleChangeTurn}
-            ></Grid>
-            <p>turn: {turn === 1 ? 'blue' : 'red'}</p>
+            />
         </div>
     );
 };

@@ -46,4 +46,6 @@ const checkForWin = (grid, rowsNum, colsNum, lastRow, lastCol, turn) => {
     return false;
 };
 
-export { createInitialGrid, checkForWin };
+const rotateGrid = () => {};
+
+export { createInitialGrid, checkForWin, rotateGrid };
