@@ -18,6 +18,8 @@ const App = () => {
 
     const handleWin = () => {
         const colors = ['#fff'];
+        setTurn(0);
+        setHasWon(true);
 
         if (turn === 1) {
             colors.push(...['#000099']);

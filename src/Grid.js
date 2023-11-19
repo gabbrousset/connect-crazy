@@ -31,6 +31,10 @@ const Grid = ({
 
     const handleTurn = useCallback(
         (colIdx) => {
+            if (hasWon) {
+                return;
+            }
+
             const rowIdx = findFirstEmptyCell(grid[colIdx]);
             handleDropDiscOnCol(colIdx, rowIdx, turn);
             if (checkForWin(grid, rowsNum, colsNum, rowIdx, colIdx, turn)) {
@@ -47,6 +51,7 @@ const Grid = ({
             turn,
             rowsNum,
             colsNum,
+            hasWon,
         ]
     );
 
