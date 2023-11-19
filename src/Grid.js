@@ -2,7 +2,14 @@ import { useState, useCallback, useMemo } from 'react';
 import { checkForWin, createInitialGrid, rotateGrid } from './utils';
 import Cell from './Cell';
 
-const Grid = ({ rowsNum, colsNum, turn, handleChangeTurn }) => {
+const Grid = ({
+    rowsNum,
+    colsNum,
+    turn,
+    handleChangeTurn,
+    handleWin,
+    hasWon,
+}) => {
     const [grid, setGrid] = useState(() => createInitialGrid(colsNum, rowsNum));
 
     const findFirstEmptyCell = (col) => col.findLastIndex((cell) => cell === 0);
@@ -26,18 +33,29 @@ const Grid = ({ rowsNum, colsNum, turn, handleChangeTurn }) => {
         (colIdx) => {
             const rowIdx = findFirstEmptyCell(grid[colIdx]);
             handleDropDiscOnCol(colIdx, rowIdx, turn);
-            handleChangeTurn();
-            console.log(
-                checkForWin(grid, rowsNum, colsNum, rowIdx, colIdx, turn)
-            );
+            if (checkForWin(grid, rowsNum, colsNum, rowIdx, colIdx, turn)) {
+                handleWin();
+            } else {
+                handleChangeTurn();
+            }
         },
-        [grid, handleChangeTurn, handleDropDiscOnCol, turn, rowsNum, colsNum]
+        [
+            grid,
+            handleChangeTurn,
+            handleDropDiscOnCol,
+            handleWin,
+            turn,
+            rowsNum,
+            colsNum,
+        ]
     );
 
     const handleRotate = () => {
         setGrid(rotateGrid(grid, rowsNum, colsNum));
     };
 
+    // todo change useMemo to the cells instead of the full column
+    // because the turn dep is making it rerender every time either way i think
     const renderedGrid = useMemo(
         () =>
             grid.map((column, colIdx) => (
